@@ -14,8 +14,10 @@ import BannerSecondPhoto from "../../assets/homePage/BannerSecondPhoto.png";
 // import { products } from "../../data/products";
 import genderData from "./genderData";
 import axios from "axios";
-
+import { useDispatch } from "react-redux";
+import { addProducts } from "../../products/FilteredProductsSlice";
 const Home = () => {
+  const dispatch=useDispatch();
   const [categoriesData, setCategoriesData] = useState([]);
   const [productsDataForCarousel, setproductsDataForCarousel] = useState([]);  // will get only 6 products for carousel
 
@@ -24,6 +26,20 @@ const Home = () => {
   // useEffect(() => {
   //   setpdts(products.filter((item, index) => index <= 6));
   // }, [products]);
+
+  useEffect(()=>{
+          (async()=>{
+              try{
+                  const response = await axios.get('http://localhost:5000/products')
+                  if(response.data.success===true)
+                  {
+                     addProducts(response.data.products)
+                  }
+              }catch(err){
+                  console.log(err)
+              }
+          })()
+      },[])
   const token = localStorage.getItem('token')
   // to get cart Length
   useEffect(()=>{
@@ -33,7 +49,7 @@ const Home = () => {
           params:{
             token
           }
-          
+        
         })
         console.log('home : ',{response})
       }catch(err){

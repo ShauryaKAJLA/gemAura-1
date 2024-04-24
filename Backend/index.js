@@ -3,7 +3,7 @@ const app= express()
 require('dotenv').config()
 const cors = require('cors')
 const {connectWithDb} = require('./db/dbConnection')
-const PORT= process.env.PORT || 4000
+const PORT= process.env.PORT || 5000
 
 // importing routes
 const CategoryRoute = require('./routes/categories.route')

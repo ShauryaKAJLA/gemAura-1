@@ -6,8 +6,10 @@ import logo from "../../assets/Backless_bg.png";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
+  const navigate = useNavigate()
   const [isShown, SetIsShown] = useState(false);
   const [isShownMatch, SetIsShownMatch] = useState(false);
   const {
@@ -24,7 +26,8 @@ const Signup = () => {
       const response = await axios.post("http://localhost:5000/auth/signup", {
         data: { email: data.Email, password: data.password },
       });
-        
+      if(response.data.success === true)
+        navigate('/login_signup/login')
     } catch (err) {
       console.log(err.response.data.message);
     }

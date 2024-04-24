@@ -3,7 +3,7 @@ import {
   addQuantity,
   reduceQuantity,
   removeItem,
-  changeSizeCart,
+  userCart,
 } from "./CartSlice";
 import { Link } from "react-router-dom";
 import { MdDelete } from "react-icons/md";
@@ -12,12 +12,9 @@ import "./cart.css";
 import { useEffect , useState } from "react";
 import axios from 'axios'
 
-
-
-
 export function Cart() {
   const dispatch = useDispatch()
-  const [cartItems ,setCartItems ] = useState(null)
+  const [cartItems ,setCartItems ] = useState(useSelector(state=>state.cart.cart))
   const token = localStorage.getItem('token')
   useEffect(()=>{
     (async()=>{
@@ -27,9 +24,9 @@ export function Cart() {
                 token
               }
             })
-            setCartItems(response.data.cart)
-            // console.log(response)
-
+            dispatch(userCart(response.data.cart))
+            // console.log('this is csrt : ',{response})
+            
         }catch(err){
           console.log(err)
         }
@@ -61,7 +58,10 @@ export function Cart() {
         size : item.size === undefined ? undefined : item.size
       })
 
-      // console.log(response)
+      if(response.data.success===true)
+      {
+        dispatch(reduceQuantity(item));
+      }
 
     }catch(err){
       console.log("ERROR : ",err)
@@ -77,9 +77,10 @@ export function Cart() {
   
 
       })
-      // if(response.data.success === true){
-      //   dispatch(addToCart(product)) 
-      // }
+      if(response.data.success === true){
+        console.log("Hello")
+        dispatch(addQuantity(item)) 
+      }
     }catch(err){
       console.log(err)
     }    
@@ -94,7 +95,7 @@ export function Cart() {
           item.product.metal.weightInGram * item.product.metal.pricePerGram) *
         item.product.quantity;
   });
-  const handelChangeSize = (id, e) => {};
+
   return (
     <div className=" flex flex-col items-center py-8 min-h-[49vh]">
       <div className=" lg:h-[15vh] md:h-[9vh]  w-[100vw] h-[10vh] text-2xl flex justify-center items-center">
@@ -113,18 +114,18 @@ export function Cart() {
               className="flex justify-between border-b my-[5vh] py-[2vh] "
             >
               <div className="flex gap-x-[2vw] h-[90px] ">
-                <Link to={`/productInfo/${item.product._id}`}>
+                <Link to={`/productInfo/${item.product&&item.product._id}`}>
                   <div className="w-[90px] h-[90px] flex flex-col justify-center items-center rounded-[15%] bg-black">
                     <img
-                      src={item.product.images[0]}
+                      src={item.product&&item.product.images[0]}
                       className="w-[60px] shrink-0 object-contain object-center  "
                     />
                   </div>
                 </Link>
                 <div className="flex flex-col sm:w-auto w-[40vw]  h-[90px] justify-center gap-[3vh]">
-                  <Link to={`/productInfo/${item.product._id}`}>
+                  <Link to={`/productInfo/${item.product&&item.product._id}`}>
                     <div className="font-semibold lg:text-lg sm:text-lg text-sm">
-                      {item.product.name} {item.size ? `(Size : ${item.size})` : null}
+                      {item.product&&item.product.name} {item.product&&item.size ? `(Size : ${item.size})` : null}
                     </div>
                   </Link>
                   <div className=" sm:text-sm text-xs text-custom font-semibold ">
@@ -135,7 +136,7 @@ export function Cart() {
                     >
                       <MdDelete size={25} />
                     </button>
-                    {!item.product.inStock && (
+                    {item.product&&!item.product.inStock && (
                       <div className=" text-red-600 flex  items-center ">
                         <MdError />
                         &nbsp; Out of stock
@@ -149,7 +150,7 @@ export function Cart() {
                   <div className="w-[10vw] head">Price: </div>{" "}
                   <div>
                     {" "}
-                    {item.product.Gem.totalPrice +
+                    {item.product&&item.product.Gem.totalPrice +
                       item.product.metal.pricePerGram * item.product.metal.weightInGram}
                   </div>
                 </div>
@@ -164,7 +165,7 @@ export function Cart() {
                       -
                     </button>
                     <div className="flex justify-center items-center">
-                      {item.quantity}
+                      {item.product&&item.quantity}
                     </div>
                     <button
                       // onClick={() => dispatch(addQuantity(item.product))}
@@ -197,7 +198,7 @@ export function Cart() {
           ))}
           <div className="flex justify-end sm:text-lg text-base font-semibold">
             {/*  price component */}
-            {cart.length !== 0 && (
+            {cartItems.length !== 0 && (
               <div className="flex gap-[5vw] items-center">
                 <div>Sub-Total &nbsp; Rs-{price}</div>
                 <div className="inp btn flex justify-center text-sm sm:w-[150px] sm:h-[45px] hover:scale-105">

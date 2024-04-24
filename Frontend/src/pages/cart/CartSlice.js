@@ -1,7 +1,4 @@
 import { createSlice, nanoid } from "@reduxjs/toolkit";
-// import { products } from "../../data/products";
-// import { products } from "../../data/products";
-
 const initialState={
     cart:[]
 }
@@ -9,99 +6,104 @@ export const CartSlice= createSlice({
     name:'cart',
     initialState,
     reducers:{
+        userCart:(state,action)=>{
+            state.cart=action.payload.filter(item=>item);
+            console.log(state.cart)
+        }
+        ,
         addToCart: (state, action) => {
            
-              if(state.cart.find(item=>item.id==action.payload.id))
+              if(state.cart.find(item=>item._id==action.payload._id))
               {
-                if(!action.payload.hasOwnProperty('size'))
-                  state.cart=state.cart.filter(item=>item.id==action.payload.id?[item,item.quantity+=1]:item)
-                else
-                {
-                    if(state.cart.find(item=>(item.id==action.payload.id&&item.size==action.payload.size)))
-                    {
-                        state.cart=state.cart.filter(item=>(item.id==action.payload.id&&item.size==action.payload.size)?[item,item.quantity+=1]:item)
-                    }
-                    else
-                    {
-                    let newitem= {
-                        id:action.payload.id,
-                        secId:nanoid(),
-                        name:action.payload.name,
-                        desc:action.payload.desc,
-                        metal:action.payload.metal,
-                        Gem:action.payload.Gem,
-                         type_of:action.payload.type_of,
-                         images:action.payload.images,
-                         quantity:1,
-                         instock:action.payload.instock,
-                         size:action.payload.size
-                    }
-                     state.cart.push(newitem);
-                    }
-                }
+
+                state.cart=state.cart.map(item=>item._id==action.payload._id?{...item,quantity:item.quantity+1}:item)
+
+                // if(!action.payload.hasOwnProperty('size'))
+                //   state.cart=state.cart.filter(item=>item._id==action.payload._id?[item,item.quantity+=1]:item)
+                // else
+                // {
+                //     if(state.cart.find(item=>(item._id==action.payload._id&&item.size==action.payload.size)))
+                //     {
+                //         state.cart=state.cart.filter(item=>(item._id==action.payload._id&&item.size==action.payload.size)?[item,item.quantity+=1]:item)
+                //     }
+                //     else
+                //     {
+                //     let newitem= {
+                //         product:{
+                //             _id:action.payload.product._id,
+                //             name:action.payload.product.name,
+                //             desc:action.payload.product.desc,
+                //             metal:action.payload.product.metal,
+                //             Gem:action.payload.product.Gem,
+                //             type_of:action.payload.product.type_of,
+                //             images:action.payload.product.images,
+                //             inStock:action.payload.product.inStock,
+                //         },
+                //         _id:action.payload._id,
+                //         quantity:1,
+                //         size:action.payload.size
+                //     }
+                //      state.cart.push(newitem);
+                //     }
+                // }
                
             }
-            else
-            {
-                if(action.payload.hasOwnProperty('size'))
-                {
-                    let newitem= {
-                        id:action.payload.id,
-                        secId:nanoid(),
-                        name:action.payload.name,
-                        desc:action.payload.desc,
-                        metal:action.payload.metal,
-                        Gem:action.payload.Gem,
-                         type_of:action.payload.type_of,
-                         images:action.payload.images,
-                         quantity:1,
-                         instock:action.payload.instock,
-                         size:action.payload.size
-                    }
-                     state.cart.push(newitem);
-                }
+        // adds
                 else
                 {
+                    if(action.payload.hasOwnProperty("size"))
+                    {
+                        let newitem= {
+                            product:{
+                                _id:action.payload.product._id,
+                                name:action.payload.product.name,
+                                desc:action.payload.product.desc,
+                                metal:action.payload.product.metal,
+                                Gem:action.payload.product.Gem,
+                                type_of:action.payload.product.type_of,
+                                images:action.payload.product.images,
+                                inStock:action.payload.product.inStock,
+                            },
+                                _id:action.payload._id,
+                                size:action.payload.size,
+                                quantity:1,
+                        }
+                         state.cart.push(newitem);
+                    }
+                    else{
                     let newitem= {
-                        id:action.payload.id,
-                        name:action.payload.name,
-                        desc:action.payload.desc,
-                        metal:action.payload.metal,
-                        Gem:action.payload.Gem,
-                         type_of:action.payload.type_of,
-                         images:action.payload.images,
-                         quantity:1,
-                         instock:action.payload.instock,
+                        product:{
+                            _id:action.payload.product._id,
+                            name:action.payload.product.name,
+                            desc:action.payload.product.desc,
+                            metal:action.payload.product.metal,
+                            Gem:action.payload.product.Gem,
+                            type_of:action.payload.product.type_of,
+                            images:action.payload.product.images,
+                            inStock:action.payload.product.inStock,
+                        },
+                        _id:action.payload._id,
+                            quantity:1,
                     }
                      state.cart.push(newitem);
                 }
-              }
+                }
+              
             
           },
         addQuantity : (state,action)=>{
-            if(!action.payload.hasOwnProperty('size'))
-            state.cart=state.cart.filter(item=>item.id==action.payload.id?[item,item.quantity+=1]:item)
-            else
-            state.cart=state.cart.filter(item=>item.id==action.payload.id&&item.secId==action.payload.secId?[item,item.quantity+=1]:item)
-        },
+            console.log("hello")
+             state.cart=state.cart.map(item=>item._id==action.payload._id?{...item,quantity:item.quantity+1}:item)
+           },
         reduceQuantity : (state,action)=>{
-            if(!action.payload.hasOwnProperty('size'))
-            state.cart=state.cart.filter(item=>item.id==action.payload.id?[item,item.quantity-=1]:item)
-            else
-            state.cart=state.cart.filter(item=>item.id==action.payload.id&&item.secId==action.payload.secId?[item,item.quantity-=1]:item)
-            state.cart=state.cart.filter(item=>item.quantity>0)
+            state.cart=state.cart.map(item=>item._id==action.payload._id?{...item,quantity:item.quantity-1}:item)
+           state.cart=state.cart.filter(item=>item.quantity>0)
         },
         removeItem : (state,action)=>{
-            if(!action.payload.hasOwnProperty('size'))
-            state.cart=state.cart.filter(item=>item.id!=action.payload.id)
-            else
-            state.cart=state.cart.filter(item=>item.secId!=action.payload.secId||item.id!=action.payload.id)
+            state.cart=state.cart.filter(item=>item._id!=action.payload._id)
         },
-        changeSizeCart:(state,action)=>{
-            state.cart=state.cart.filter(item=>item.secId===action.payload.secId?[item,item.size=action.payload.size]:item)
-        }
     }
 })
 
-export const {addToCart,addQuantity,reduceQuantity,removeItem,changeSizeCart} = CartSlice.actions
+export const {addToCart,addQuantity,reduceQuantity,removeItem,userCart} = CartSlice.actions
 export default CartSlice.reducer

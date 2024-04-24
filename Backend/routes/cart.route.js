@@ -22,12 +22,14 @@ router.post("/add", tokenAuth, async (req, res) => {
     });
     // console.log(productIndexInCart);
     let newCart = [];
+    let updatedProduct = []
     // console.log((type ==='Ring'||type ==='ring'))
 
     if (productIndexInCart !== -1) {
     //   console.log("mil gya ...");
       newCart = fetchedUser.cart.map((cartItem) => {
         if (cartItem.product == productId && cartItem.size == size) {
+          updatedProduct = { ...cartItem, quantity: cartItem.quantity + 1 }
           return { ...cartItem, quantity: cartItem.quantity + 1 };
         } else {
           return cartItem;
@@ -39,9 +41,11 @@ router.post("/add", tokenAuth, async (req, res) => {
         ...fetchedUser.cart,
         { product: productId, size: size !== undefined ? size : undefined },
       ];
+      updatedProduct = {product : productId, size: size !== undefined ? size : undefined}
     }
     fetchedUser.cart = newCart;
     // fetchedUser.size = size
+    // console.log({updatedProduct})
     await fetchedUser.save();
     return res.status(200).json({ success: true, cart: newCart });
   } catch (err) {

@@ -1,19 +1,26 @@
 import { createSlice } from "@reduxjs/toolkit";
-import {products} from '../data/products'
+
 const initialState={
-    products:products.filter(item=>item)
+    products:[],
+    AllProducts:[],
 };
-const types=products.map(item=>item.type_of)
-const gem=products.map(item=>item.Gem.type)
-const metal=products.map(item=>item.metal.type)
+
 export const FilteredProductsSlice=createSlice({
     name:"FilteredProducts",
     initialState,
     reducers:{
+      addProducts:(state,action)=>{
+        state.AllProducts=action.payload.filter(item=>item);
+        console.log(state.AllProducts)
+    },
         changeProducts:(state,action)=>{
-            let pro=products.filter(item=>item)
+          const types=state.AllProducts.map(item=>item.type_of)
+          const gem=state.AllProducts.map(item=>item.Gem.type)
+          const metal=state.AllProducts.map(item=>item.metal.type)
+
+            let pro=state.AllProducts.filter(item=>item)
             console.log(action.payload)
-              if(action.payload.gender!='All')
+            if(action.payload.gender!='All')
               {
                 pro=pro.filter(i=>i.gender==action.payload.gender)
               }
@@ -47,21 +54,16 @@ export const FilteredProductsSlice=createSlice({
                 }
                if(dummy.length!=0)
                pro=dummy.filter(item=>item)
-
+                let temp="";
                 types.forEach(item=>{
-                  if(action.payload.search.toLowerCase().includes(item.toLowerCase())||item.toLowerCase().includes(action.payload.search.toLowerCase())||item.toLowerCase().startsWith(action.payload.search.toLowerCase())||action.payload.search.toLowerCase().startsWith(item.toLowerCase())||item.toLowerCase().endsWith(action.payload.search.toLowerCase())||action.payload.search.toLowerCase().endsWith(item.toLowerCase()))
+                  if(action.payload.search.toLowerCase().includes(item.toLowerCase())&&!types.find(i=>i.length>item.length&&action.payload.search.toLowerCase().includes(i.toLowerCase())))
                   {
-                    dummy=dummy.filter(i=>i.type_of.toLowerCase().includes(item.toLowerCase()))
-                    console.log(dummy)
+                    dummy=dummy.filter(i=>i.type_of.toLowerCase()==item.toLowerCase())
                   }
                 })
-                if(dummy.length!=0)
-                dummy.map(item=>{
-                 if(!pro.find(i=>i.id==item.id))
-                  pro.push(item)
-            }
-              )
-
+                if(dummy.length)
+                pro=dummy.filter(item=>item.type_of.toLowerCase()==temp.toLowerCase());
+               
                 metal.forEach(item=>{
                   if(action.payload.search.toLowerCase().includes(item.toLowerCase())||item.toLowerCase().includes(action.payload.search.toLowerCase()))
                   {
@@ -86,16 +88,5 @@ export const FilteredProductsSlice=createSlice({
        
     }
 })
-export const {searchProducts,changeProducts}=FilteredProductsSlice.actions;
-
-
-
-
-
-
-
-
-
-
-
+export const {searchProducts,changeProducts,addProducts}=FilteredProductsSlice.actions;
 export default FilteredProductsSlice.reducer;

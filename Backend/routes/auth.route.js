@@ -15,8 +15,8 @@ router.post('/signup',async(req,res)=>{
         }
    
         const hashedPassword = await bcrypt.hash(password , 10)
-        const newUser = await User.create({email,password:hashedPassword}.toJSON())
-        const userDetailsToReturn  = {...newUser.toJSON() , password:undefined ,__v:undefined}
+        const newUser = await User.create({email,password:hashedPassword})
+        const userDetailsToReturn  = {...newUser , password:undefined ,__v:undefined}
 
         return res.status(200).json({success:true , user:userDetailsToReturn})
 
