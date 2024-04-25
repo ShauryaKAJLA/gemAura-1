@@ -16,6 +16,7 @@ import genderData from "./genderData";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { addProducts } from "../../products/FilteredProductsSlice";
+import { userCart } from "../cart/CartSlice";
 const Home = () => {
   const dispatch=useDispatch();
   const [categoriesData, setCategoriesData] = useState([]);
@@ -26,8 +27,24 @@ const Home = () => {
   // useEffect(() => {
   //   setpdts(products.filter((item, index) => index <= 6));
   // }, [products]);
+  useEffect(()=>{
+    (async()=>{
+        try{
+            const response = await axios.get('http://localhost:5000/cart/',{
+              params:{
+                token
+              }
+            })
+            dispatch(userCart(response.data.cart))
+            
+        }catch(err){
+          console.log(err)
+        }
+    })()
+  },[])
 
   useEffect(()=>{
+    
           (async()=>{
               try{
                   const response = await axios.get('http://localhost:5000/products')
